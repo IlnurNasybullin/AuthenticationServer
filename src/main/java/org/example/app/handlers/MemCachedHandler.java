@@ -2,17 +2,16 @@ package org.example.app.handlers;
 
 import com.whalin.MemCached.MemCachedClient;
 import com.whalin.MemCached.SockIOPool;
-import org.example.app.models.User;
+import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
-import java.util.UUID;
 
-public class MemCachedHandler {
+@Component("memCachedHandler")
+public class MemCachedHandler implements CachedHandler {
 
-    private final static MemCachedClient client;
-    public static final String CACHE = "cache";
+    public static final String CACHE = "AuthenticationCache";
+    private static final MemCachedClient client;
+    public static final int SECONDS_TO_MILLI = 1_000;
 
     static {
         String[] servers = {"localhost:11211"};
@@ -30,31 +29,22 @@ public class MemCachedHandler {
         client = new MemCachedClient(CACHE);
     }
 
-    public static UUID addUser(User user, Date expireDate) {
-        UUID uuid = UUID.nameUUIDFromBytes(user.getEmail().getBytes());
-        add(uuid.toString(), user, expireDate);
-        return uuid;
+    @Override
+    public boolean add(String key, Object value, int secondLife) {
+        return client.add(key, value, getExpiryDate(secondLife));
     }
 
-    public static boolean add(String key, Serializable value, Date expiry) {
-        return client.add(key, value, expiry);
+    private Date getExpiryDate(int secondLife) {
+        return new Date(SECONDS_TO_MILLI * secondLife);
     }
 
-    public static boolean containsUser(User user) {
-        return contains(getUUID(user).toString());
+    @Override
+    public boolean contains(String key) {
+        return client.keyExists(key);
     }
 
-    private static UUID getUUID(User user) {
-        return UUID.nameUUIDFromBytes(user.getEmail().getBytes());
-    }
-
-    public static boolean contains(String key) {
-        return client.keyExists(key) && Objects.nonNull(client.get(key));
-    }
-
-    public static UUID replaceUserDate(User user, Date expiryDate) {
-        UUID uuid = getUUID(user);
-        client.replace(uuid.toString(), user, expiryDate);
-        return uuid;
+    @Override
+    public boolean set(String key, Object value, int secondLife) {
+        return client.set(key, value, getExpiryDate(secondLife));
     }
 }
