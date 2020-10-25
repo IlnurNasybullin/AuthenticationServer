@@ -44,6 +44,8 @@ public class AuthenticationController {
         Cookie cookie = new Cookie(JSESSION, uuid.toString());
         cookie.setHttpOnly(true);
         cookie.setMaxAge(MAX_AGE);
+        cookie.setPath("/");
+        cookie.setDomain("localhost");
 
         return cookie;
     }
@@ -72,6 +74,7 @@ public class AuthenticationController {
 
     @GetMapping("authentication")
     public void authenticate(@CookieValue(value = JSESSION, defaultValue = " ") String cookie, HttpServletResponse response) {
+        System.out.println(cookie);
         if (memCachedHandler.contains(cookie)) {
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
