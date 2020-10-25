@@ -74,7 +74,6 @@ public class AuthenticationController {
 
     @GetMapping("authentication")
     public void authenticate(@CookieValue(value = JSESSION, defaultValue = " ") String cookie, HttpServletResponse response) {
-        System.out.println(cookie);
         if (memCachedHandler.contains(cookie)) {
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
