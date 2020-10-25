@@ -5,6 +5,7 @@ import org.example.app.models.User;
 import org.example.app.repositories.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -25,8 +26,8 @@ public class AuthenticationController {
     @Qualifier("memCachedHandler")
     private CachedHandler memCachedHandler;
 
-    @PostMapping("/registration")
-    public Cookie register(@RequestBody User user, HttpServletResponse response) {
+    @PostMapping(value = "/registration", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    public Cookie register(User user, HttpServletResponse response) {
         if (userRepository.contains(user)) {
             response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
             return null;
