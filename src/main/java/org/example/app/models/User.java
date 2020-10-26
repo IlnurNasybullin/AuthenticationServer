@@ -2,18 +2,40 @@ package org.example.app.models;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public class User implements Serializable {
+
+    public static final Predicate<String> emailPattern = Pattern.compile(".+@+\\..+").asMatchPredicate();
 
     private String name;
     private String email;
     private String password;
+
+    public User() {}
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
+        checkName(name);
         this.name = name;
+    }
+
+    private void checkName(String name) {
+        try {
+            checkOnEmpty(name);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(String.format("Name {%s} is blank!", name), e);
+        }
+    }
+
+    private void checkOnEmpty(String name) {
+        if (name.trim().isBlank()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public String getEmail() {
@@ -21,7 +43,14 @@ public class User implements Serializable {
     }
 
     public void setEmail(String email) {
+        checkEmail(email);
         this.email = email;
+    }
+
+    private void checkEmail(String email) {
+        if (!emailPattern.test(email)) {
+            throw new IllegalArgumentException(String.format("Email {%s} is not valid!", email));
+        }
     }
 
     public String getPassword() {
@@ -29,7 +58,16 @@ public class User implements Serializable {
     }
 
     public void setPassword(String password) {
+        checkPassword(password);
         this.password = password;
+    }
+
+    private void checkPassword(String password) {
+        try {
+            checkOnEmpty(password);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(String.format("Password {%s} is blank!", password), e);
+        }
     }
 
     @Override
