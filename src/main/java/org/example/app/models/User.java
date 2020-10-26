@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class User implements Serializable {
 
-    public static final Predicate<String> emailPattern = Pattern.compile(".+@+\\..+").asMatchPredicate();
+    public static final Predicate<String> emailPattern = Pattern.compile(".+@.+\\..+").asMatchPredicate();
 
     private String name;
     private String email;
@@ -85,6 +85,10 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return name;
+        return "User{" +
+                "name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }
