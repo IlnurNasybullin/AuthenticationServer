@@ -82,6 +82,20 @@ public class AuthenticationController {
         }
     }
 
+    @GetMapping("exit")
+    public void exit(@CookieValue(value = JSESSION, defaultValue = " ") String cookie, HttpServletResponse response) {
+        if (cookie.equals(" ")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        if (memCachedHandler.delete(cookie)) {
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+        }
+    }
+
     private UUID getUUID(String key) {
         return UUID.nameUUIDFromBytes(key.getBytes());
     }

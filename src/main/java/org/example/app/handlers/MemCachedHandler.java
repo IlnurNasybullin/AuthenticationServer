@@ -47,4 +47,9 @@ public class MemCachedHandler implements CachedHandler {
     public boolean set(String key, Object value, int secondLife) {
         return client.set(key, value, getExpiryDate(secondLife));
     }
+
+    @Override
+    public boolean delete(String key) {
+        return client.delete(key);
+    }
 }
