@@ -10,7 +10,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import java.sql.Types;
 
 @org.springframework.stereotype.Repository("userRepository")
-@PropertySource("database.properties")
+@PropertySource("classpath:database.properties")
 public class UserRepository implements Repository<User> {
 
     @Value("${database.tableName}")
@@ -28,6 +28,7 @@ public class UserRepository implements Repository<User> {
     public static final String containsQuery = "SELECT * FROM \"%s\" WHERE \"%s\" = ?;";
     public static final String insertQuery = "INSERT INTO \"%s\"(\"%s\", \"%s\", \"%s\") VALUES(?, ?, ?)";
     public static final String authorizedQuery = "SELECT * FROM \"%s\" WHERE \"%s\" = ? AND \"%s\" = ?;";
+    public static final String deleteQuery = "DELETE FROM \"%s\" WHERE \"%s\" = ?";
 
     @Autowired
     private JdbcOperations jdbcOperations;
@@ -62,5 +63,15 @@ public class UserRepository implements Repository<User> {
 
         SqlRowSet rowSet = jdbcOperations.queryForRowSet(query, objects, types);
         return rowSet.next();
+    }
+
+    @Override
+    public boolean remove(User user) {
+        String query = String.format(deleteQuery, tableName, emailColumn);
+
+        Object[] objects = {user.getEmail()};
+        int[] types = {Types.VARCHAR};
+
+        return jdbcOperations.update(query, objects, types) > 0;
     }
 }
