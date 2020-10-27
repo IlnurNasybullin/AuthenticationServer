@@ -78,7 +78,7 @@ public class UserRepositoryTest extends AbstractTestNGSpringContextTests {
     }
 
     @AfterTest(groups = "insert")
-    public void init() {
+    public void remove() {
         System.out.println("after insert test");
 
         Object[][] objects = user_insert_true();
