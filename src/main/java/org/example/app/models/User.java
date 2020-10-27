@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 public class User implements Serializable {
 
     public static final Predicate<String> emailPattern = Pattern.compile(".+@.+\\..+").asMatchPredicate();
+    public static final int MIN_LENGTH = 8;
 
     private String name;
     private String email;
@@ -63,10 +64,8 @@ public class User implements Serializable {
     }
 
     private void checkPassword(String password) {
-        try {
-            checkOnEmpty(password);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(String.format("Password {%s} is blank!", password), e);
+        if (password.length() < MIN_LENGTH || password.contains(" ")) {
+            throw new IllegalArgumentException(String.format("Password {%s} is not valid!", password));
         }
     }
 

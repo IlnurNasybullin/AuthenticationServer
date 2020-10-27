@@ -27,7 +27,7 @@ public class UserRepository implements Repository<User> {
 
     public static final String containsQuery = "SELECT * FROM \"%s\" WHERE \"%s\" = ?;";
     public static final String insertQuery = "INSERT INTO \"%s\"(\"%s\", \"%s\", \"%s\") VALUES(?, ?, ?)";
-    public static final String checkQuery = "SELECT * FROM \"%s\" WHERE \"%s\" = ? AND \"%s\" = ?;";
+    public static final String authorizedQuery = "SELECT * FROM \"%s\" WHERE \"%s\" = ? AND \"%s\" = ?;";
 
     @Autowired
     private JdbcOperations jdbcOperations;
@@ -54,8 +54,8 @@ public class UserRepository implements Repository<User> {
     }
 
     @Override
-    public boolean check(User user) {
-        String query = String.format(checkQuery, tableName, emailColumn, passwordColumn);
+    public boolean isAuthorized(User user) {
+        String query = String.format(authorizedQuery, tableName, emailColumn, passwordColumn);
 
         Object[] objects = {user.getEmail(), user.getPassword()};
         int[] types = {Types.VARCHAR, Types.VARCHAR};

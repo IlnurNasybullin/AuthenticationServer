@@ -57,7 +57,7 @@ public class AuthenticationController {
         user.setEmail(email);
         user.setPassword(password);
 
-        if (!userRepository.check(user)) {
+        if (!userRepository.isAuthorized(user)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return null;
         }

@@ -29,18 +29,7 @@ public class Test {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        User user = new User();
-        user.setPassword("a");
-        user.setEmail("b");
+        String password = "a 2";
 
-        Date date = new Date();
-        Date newDate = new Date(1_000 * MAX_AGE);
-
-        System.out.println(newDate);
-
-        client.add("b", true, newDate);
-        System.out.println(client.get("b"));
-        client.set("b", "st", newDate);
-        System.out.println(client.get("b"));
     }
 }
