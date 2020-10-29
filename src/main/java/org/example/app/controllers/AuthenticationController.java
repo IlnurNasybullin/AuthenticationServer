@@ -42,6 +42,8 @@ public class AuthenticationController {
 
     @PostMapping(value = "/registration", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public Cookie register(User user, HttpServletResponse response) {
+        checkUser(user);
+
         logger.info("Response is received for registration user");
 
         if (userRepository.contains(user)) {
@@ -72,6 +74,17 @@ public class AuthenticationController {
         Cookie cookie = getCookie(uuid);
         response.setStatus(HttpServletResponse.SC_CREATED);
         return cookie;
+    }
+
+    private void checkUser(User user) {
+        String email = user.getEmail();
+        String name = user.getName();
+        String password = user.getPassword();
+
+        User checkUser = new User();
+        checkUser.setEmail(email);
+        checkUser.setPassword(password);
+        checkUser.setName(name);
     }
 
     @GetMapping("/sign")
