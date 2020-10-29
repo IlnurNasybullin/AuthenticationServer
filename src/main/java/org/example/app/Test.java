@@ -29,7 +29,11 @@ public class Test {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        String password = "a 2";
+        String key = "7";
 
+        System.out.println(client.add(key, true, new Date(10_000)));
+        System.out.println(client.get(key));
+        System.out.println(client.delete(key));
+        System.out.println(client.keyExists(key));
     }
 }
