@@ -6,4 +6,6 @@ public interface CachedHandler {
     boolean contains(String key);
     boolean set(String key, Object value, int secondLife);
     boolean delete(String key);
+
+    Object get(String key);
 }

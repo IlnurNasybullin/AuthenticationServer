@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.UUID;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -63,7 +66,7 @@ public class AuthenticationController {
 
         UUID uuid = getUUID(user.getEmail());
 
-        if (!memCachedHandler.add(uuid.toString(), true, MAX_AGE)) {
+        if (!memCachedHandler.add(uuid.toString(), user.getEmail(), MAX_AGE)) {
             logger.severe("Cookie value isn't added to memCached!");
             logger.log(Level.SEVERE, "Response code - ", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -88,7 +91,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/sign")
-    public Cookie signIn(@RequestParam String email, @RequestParam String password, HttpServletResponse response) {
+    public Cookie signIn(@RequestParam String email, @RequestParam String password, HttpServletResponse response) throws IOException {
         logger.info("Response is received for sign in user");
 
         User user = new User();
@@ -106,10 +109,10 @@ public class AuthenticationController {
         String key = uuid.toString();
 
         if (memCachedHandler.contains(email)) {
-            memCachedHandler.set(key, true, MAX_AGE);
+            memCachedHandler.set(key, email, MAX_AGE);
             logger.info("Cookie value is reset in memCached");
         } else {
-            memCachedHandler.add(key, true, MAX_AGE);
+            memCachedHandler.add(key, email, MAX_AGE);
             logger.info("Cookie value is added to memCached");
         }
 
@@ -117,11 +120,13 @@ public class AuthenticationController {
     }
 
     @GetMapping("authorize")
-    public void authorize(@CookieValue(value = JSESSION, defaultValue = " ") String cookie, HttpServletResponse response) {
+    public void authorize(@CookieValue(value = JSESSION, defaultValue = "") String cookie, HttpServletResponse response) throws IOException {
         logger.info("Response received for checking authentication");
 
-        if (memCachedHandler.contains(cookie)) {
+        if (!cookie.equals("") && memCachedHandler.contains(cookie)) {
             logger.info("User with get cookie is authorized");
+            memCachedHandler.set(cookie, memCachedHandler.get(cookie), MAX_AGE);
+            logger.info("Cookie is reset");
             response.setStatus(HttpServletResponse.SC_OK);
             logger.log(Level.INFO, "Response code - ", HttpServletResponse.SC_OK);
         } else {
@@ -131,11 +136,32 @@ public class AuthenticationController {
         }
     }
 
+    @GetMapping("getEmail")
+    public String getEmail(@CookieValue(value = JSESSION, defaultValue = "") String cookie, HttpServletResponse response) {
+        logger.info("Response received for getting email");
+
+        if (!cookie.equals("") && memCachedHandler.contains(cookie)) {
+            logger.info("User with get cookie is authorized");
+            String email =  (String) memCachedHandler.get(cookie);
+            memCachedHandler.set(cookie, email, MAX_AGE);
+            logger.info("Cookie is reset");
+            response.setStatus(HttpServletResponse.SC_OK);
+            logger.log(Level.INFO, "Response code - ", HttpServletResponse.SC_OK);
+            return email;
+        } else {
+            logger.warning("User with get cookie isn't authorized");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            logger.log(Level.WARNING, "Response code - ", HttpServletResponse.SC_UNAUTHORIZED);
+        }
+
+        return null;
+    }
+
     @GetMapping("exit")
     public void exit(@CookieValue(value = JSESSION, defaultValue = "") String cookie, HttpServletResponse response) {
         logger.info("Response received for exiting from system");
 
-        if (cookie.equals("")) {
+        if (cookie.equals("") || !memCachedHandler.contains(cookie)) {
             logger.warning("User with same cookie isn't authorized");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             logger.log(Level.WARNING, "Response code - ", HttpServletResponse.SC_UNAUTHORIZED);

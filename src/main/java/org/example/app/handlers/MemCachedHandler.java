@@ -52,4 +52,9 @@ public class MemCachedHandler implements CachedHandler {
     public boolean delete(String key) {
         return client.delete(key);
     }
+
+    @Override
+    public Object get(String key) {
+        return client.get(key);
+    }
 }
