@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 @RestController
 public class AuthenticationController {
 
-    public final static Logger logger = Logger.getLogger(App.class.getName());
+    public final static Logger logger = Logger.getLogger(AuthenticationController.class.getName());
 
     static {
         ConsoleHandler handler = new ConsoleHandler();

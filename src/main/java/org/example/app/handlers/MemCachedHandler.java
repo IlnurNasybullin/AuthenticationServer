@@ -14,7 +14,7 @@ public class MemCachedHandler implements CachedHandler {
     public static final int SECONDS_TO_MILLI = 1_000;
 
     static {
-        String[] servers = {"localhost:11211"};
+        String[] servers = {"host.docker.internal:11211"};
         SockIOPool pool = SockIOPool.getInstance(CACHE);
         pool.setMinConn(2);
         pool.setMaxConn(20);
