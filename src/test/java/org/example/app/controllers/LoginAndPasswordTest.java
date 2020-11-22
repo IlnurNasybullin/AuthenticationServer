@@ -48,9 +48,9 @@ public class LoginAndPasswordTest extends AbstractTestNGSpringContextTests {
     @DataProvider
     public static Object[][] email_and_password_ok() {
         return new Object[][] {
-                {"ilnur.nasybullin2000@yandex.ru", "12345678"},
-                {"ilnur2000@yandex.ru", "abcdefgh"},
-                {"2000@gmail.com", "1a2b3c4dslfkslfkseflskjfldjfsawd;sfefsfsf_3wrs!@"}
+                {"alice@yandex.ru", "AlicePassword"},
+                {"bob@gmail.com", "BobPassword"},
+                {"jack@gmail.com", "JackPassword"}
         };
     }
 

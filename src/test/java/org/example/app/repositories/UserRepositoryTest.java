@@ -26,7 +26,7 @@ public class UserRepositoryTest extends AbstractTestNGSpringContextTests {
     @DataProvider
     public static Object[][] user_contains_true() {
         return new Object[][]  {
-                {"ilnur.nasybullin2000@yandex.ru"}, {"IANasybullin@stud.kpfu.ru"}
+                {"alice@yandex.ru"}, {"bob@gmail.com"}
         };
     }
 
