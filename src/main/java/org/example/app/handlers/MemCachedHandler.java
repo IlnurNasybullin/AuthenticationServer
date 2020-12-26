@@ -50,7 +50,7 @@ public class MemCachedHandler implements CachedHandler {
 
     @Override
     public boolean delete(String key) {
-        return client.delete(key);
+        return set(key, get(key), 0);
     }
 
     @Override

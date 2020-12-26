@@ -1,6 +1,5 @@
 package org.example.app.controllers;
 
-import org.example.app.App;
 import org.example.app.handlers.CachedHandler;
 import org.example.app.loggers.MyFormatter;
 import org.example.app.models.User;
@@ -10,11 +9,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.UUID;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -80,9 +76,14 @@ public class AuthenticationController {
     }
 
     private void checkUser(User user) {
+        logger.info("check user data");
         String email = user.getEmail();
         String name = user.getName();
         String password = user.getPassword();
+
+        logger.log(Level.INFO, "user email - %s", email);
+        logger.log(Level.INFO, "user name - %s", name);
+        logger.log(Level.INFO, "user password - %s", password);
 
         User checkUser = new User();
         checkUser.setEmail(email);
@@ -91,7 +92,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/sign")
-    public Cookie signIn(@RequestParam String email, @RequestParam String password, HttpServletResponse response) throws IOException {
+    public Cookie signIn(@RequestParam String email, @RequestParam String password, HttpServletResponse response) {
         logger.info("Response is received for sign in user");
 
         User user = new User();
@@ -120,7 +121,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("authorize")
-    public void authorize(@CookieValue(value = JSESSION, defaultValue = "") String cookie, HttpServletResponse response) throws IOException {
+    public void authorize(@CookieValue(value = JSESSION, defaultValue = "") String cookie, HttpServletResponse response) {
         logger.info("Response received for checking authentication");
 
         if (!cookie.equals("") && memCachedHandler.contains(cookie)) {
